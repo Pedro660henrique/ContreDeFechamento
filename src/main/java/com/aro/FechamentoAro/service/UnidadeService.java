@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.aro.FechamentoAro.entities.Unidade;
 import com.aro.FechamentoAro.repository.UnidadeRepository;
 
+@Service
 public class UnidadeService {
 	
 	@Autowired
@@ -26,7 +28,7 @@ public class UnidadeService {
     }
 
 	public Optional<Unidade> buscarPorId(Long id) {
-		return unidadeRepository.buscarPorId(id);
+		return unidadeRepository.findById(id);
 	}
 
 	public void atualizarStatus(Long id, boolean ativa) {

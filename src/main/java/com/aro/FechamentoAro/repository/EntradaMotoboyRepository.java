@@ -1,6 +1,6 @@
 package com.aro.FechamentoAro.repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +11,6 @@ import com.aro.FechamentoAro.entities.EntradaMotoboy;
 @Repository
 public interface EntradaMotoboyRepository extends JpaRepository<EntradaMotoboy, Long> {
 	List<EntradaMotoboy> findByMotoboyId(Long motoboyId);
-    List<EntradaMotoboy> findByDataBetween(LocalDate inicio, LocalDate fim);
+	
+	List<EntradaMotoboy> findByDataHoraBetween(LocalDateTime inicio, LocalDateTime fim);
 }

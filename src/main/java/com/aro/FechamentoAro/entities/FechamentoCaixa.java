@@ -29,6 +29,8 @@ public class FechamentoCaixa {
     private LocalTime horarioFechamento;
     private BigDecimal inicioTroco;
     private BigDecimal terminoTroco;
+    private BigDecimal totalFechamento;
+
 	
 	@ManyToOne
 	private Unidade unidade;

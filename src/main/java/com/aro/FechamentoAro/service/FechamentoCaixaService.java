@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.aro.FechamentoAro.dto.FechamentoCaixaDTO;
 import com.aro.FechamentoAro.entities.FechamentoCaixa;
+import com.aro.FechamentoAro.entities.FechamentoMotoboy;
 import com.aro.FechamentoAro.entities.Unidade;
 import com.aro.FechamentoAro.entities.Usuario;
 import com.aro.FechamentoAro.exceptions.BusinessException;
 import com.aro.FechamentoAro.exceptions.EntityNotFoundException;
 import com.aro.FechamentoAro.repository.FechamentoCaixaRepository;
+import com.aro.FechamentoAro.repository.FechamentoMotoboyRepository;
 import com.aro.FechamentoAro.repository.UnidadeRepository;
 import com.aro.FechamentoAro.repository.UsuarioRepository;
 
@@ -35,6 +37,9 @@ public class FechamentoCaixaService {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private FechamentoMotoboyRepository fechamentoMotoboyRepository;
 
     /**
      * Abre um novo caixa para a unidade especificada
@@ -81,13 +86,25 @@ public class FechamentoCaixaService {
     /**
      * Fecha um caixa aberto
      */
+ 
     @Transactional
     public FechamentoCaixa fecharCaixa(Long id, BigDecimal trocoFinal) {
+        // Primeiro obtém o caixa
         FechamentoCaixa caixa = fechamentoCaixaRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Caixa não encontrado com ID: " + id));
 
         if (caixa.getHorarioFechamento() != null) {
             throw new BusinessException("Este caixa já está fechado");
+        }
+
+        // Agora que temos o caixa, podemos usar caixa.getUnidade()
+        List<FechamentoMotoboy> fechamentosMotoboys = fechamentoMotoboyRepository
+            .findByUnidade_IdAndData(caixa.getUnidade().getId(), LocalDate.now());
+        
+        BigDecimal totalFechamentoMotoboy = BigDecimal.ZERO;
+
+        for (FechamentoMotoboy fechamento : fechamentosMotoboys) {
+            totalFechamentoMotoboy = totalFechamentoMotoboy.add(fechamento.getSaldoFinal());
         }
 
         // Obtém o usuário autenticado
@@ -96,9 +113,11 @@ public class FechamentoCaixaService {
         Usuario usuario = usuarioRepository.findByEmail(username)
             .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
+        // Atualizar o fechamento do caixa
         caixa.setTerminoTroco(trocoFinal);
-        caixa.setHorarioFechamento(LocalTime.now());
+        caixa.setTotalFechamento(totalFechamentoMotoboy);
         caixa.setUsuarioFechamento(usuario);
+        caixa.setHorarioFechamento(LocalTime.now());
 
         return fechamentoCaixaRepository.save(caixa);
     }

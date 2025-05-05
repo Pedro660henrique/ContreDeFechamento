@@ -13,5 +13,5 @@ public  interface UnidadeRepository extends JpaRepository<Unidade, Long>{
 	Optional<Unidade> findByNome(String nome);
 	List<Unidade> findByAtivaTrue();
 	boolean existsByNome(String nome);
-	Optional<Unidade> buscarPorId(Long id);
+	Optional<Unidade> findById(Long id);
 }

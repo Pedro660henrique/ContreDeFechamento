@@ -1,5 +1,6 @@
 package com.aro.FechamentoAro.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,9 @@ public class FechamentoMotoboyService {
     @Autowired
     private MotoboyRepository motoboyRepository;
     
+    @Autowired
+    private EntregaService entregasService;
+    
     @Transactional
     public FechamentoMotoboy fecharPeriodo(FechamentoMotoboyDTO dto) {
     	Motoboy motoboy = motoboyRepository.findById(dto.getMotoboyId())
@@ -36,6 +40,9 @@ public class FechamentoMotoboyService {
         fechamento.setDespesas(dto.getDespesas());
         fechamento.setRetiradas(dto.getRetiradas());
         fechamento.setSaldoFinal(dto.getValorRecebido().subtract(dto.getDespesas()).subtract(dto.getRetiradas()));
+        
+        BigDecimal totalEntregas = entregasService.contarEntregasPorFechamento(fechamento.getId());
+        fechamento.setSaldoFinal(dto.getValorRecebido().subtract(dto.getDespesas()).subtract(dto.getRetiradas()).add(totalEntregas));
 
         return repository.save(fechamento);
     }

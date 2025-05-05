@@ -14,4 +14,7 @@ public interface FechamentoMotoboyRepository extends JpaRepository<FechamentoMot
 	List<FechamentoMotoboy> findByMotoboyId(Long motoboyId);
     Optional<FechamentoMotoboy> findFirstByMotoboyIdOrderByDataDesc(Long motoboyId);
 	List<FechamentoMotoboy> findByDataBetween(LocalDate dataInicio, LocalDate dataFim);
+	List<FechamentoMotoboy> findByUnidade_IdAndData(Long unidadeId, LocalDate data);
+	
+	    
 }
