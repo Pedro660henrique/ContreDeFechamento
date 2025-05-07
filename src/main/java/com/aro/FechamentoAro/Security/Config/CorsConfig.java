@@ -9,15 +9,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-        	.allowedOrigins("https://FechamentoAro.com", "https://app.FechamentoAro.com","http://localhost:8080",       // Para desenvolvimento
-        		    "http://127.0.0.1:8080")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-            .allowedHeaders("*")
-            .exposedHeaders("Authorization")  // Importante para JWT
-            .allowCredentials(true)
-            .maxAge(3600);
-    }
+	 private static final String[] ALLOWED_ORIGINS = {
+		        "https://FechamentoAro.com", 
+		        "https://app.FechamentoAro.com",
+		        "http://localhost:8080",
+		        "http://127.0.0.1:8080"
+		    };
+
+		    @Override
+		    public void addCorsMappings(CorsRegistry registry) {
+		        registry.addMapping("/**")
+		            .allowedOrigins(ALLOWED_ORIGINS)
+		            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+		            .allowedHeaders("*")
+		            .exposedHeaders("Authorization")
+		            .allowCredentials(true)
+		            .maxAge(3600);
+		    }
 }
