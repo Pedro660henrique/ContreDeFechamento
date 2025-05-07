@@ -1,5 +1,6 @@
 package com.aro.FechamentoAro.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -9,11 +10,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-public class SaidaMotoboy {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class SaidaMotoboy implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     private BigDecimal valor;
     private LocalDateTime dataHora;

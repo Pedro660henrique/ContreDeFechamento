@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aro.FechamentoAro.dto.AtualizarUsuarioDTO;
+import com.aro.FechamentoAro.dto.CriarUsuarioDTO;
 import com.aro.FechamentoAro.entities.Usuario;
 import com.aro.FechamentoAro.service.UsuarioService;
 
@@ -26,7 +28,7 @@ public class UsuarioController {
 	@Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
+	@GetMapping
     public List<Usuario> listarTodos() {
         return usuarioService.listarTodos();
     }
@@ -39,16 +41,16 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> salvar(@RequestBody @Valid Usuario usuario) {
-        Usuario salvo = usuarioService.salvar(usuario);
+    public ResponseEntity<Usuario> salvar(@RequestBody @Valid CriarUsuarioDTO dto) {
+        Usuario salvo = usuarioService.criar(dto);
         return ResponseEntity.ok(salvo);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizar(
             @PathVariable Long id,
-            @RequestBody @Valid Usuario usuario) {
-    	return ResponseEntity.ok(usuarioService.atualizar(id, usuario));
+            @RequestBody @Valid AtualizarUsuarioDTO dto) {
+        return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")

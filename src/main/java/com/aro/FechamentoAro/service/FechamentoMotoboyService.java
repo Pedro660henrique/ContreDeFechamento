@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aro.FechamentoAro.dto.FechamentoMotoboyDTO;
+import com.aro.FechamentoAro.dto.TotalEntregasDTO;
 import com.aro.FechamentoAro.entities.FechamentoMotoboy;
 import com.aro.FechamentoAro.entities.Motoboy;
 import com.aro.FechamentoAro.exceptions.EntityNotFoundException;
@@ -16,8 +17,10 @@ import com.aro.FechamentoAro.repository.FechamentoMotoboyRepository;
 import com.aro.FechamentoAro.repository.MotoboyRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class FechamentoMotoboyService {
     @Autowired
     private FechamentoMotoboyRepository repository;
@@ -30,7 +33,7 @@ public class FechamentoMotoboyService {
     
     @Transactional
     public FechamentoMotoboy fecharPeriodo(FechamentoMotoboyDTO dto) {
-    	Motoboy motoboy = motoboyRepository.findById(dto.getMotoboyId())
+        Motoboy motoboy = motoboyRepository.findById(dto.getMotoboyId())
                 .orElseThrow(() -> new EntityNotFoundException("Motoboy não encontrado"));
 
         FechamentoMotoboy fechamento = new FechamentoMotoboy();
@@ -39,10 +42,17 @@ public class FechamentoMotoboyService {
         fechamento.setValorRecebido(dto.getValorRecebido());
         fechamento.setDespesas(dto.getDespesas());
         fechamento.setRetiradas(dto.getRetiradas());
-        fechamento.setSaldoFinal(dto.getValorRecebido().subtract(dto.getDespesas()).subtract(dto.getRetiradas()));
         
-        BigDecimal totalEntregas = entregasService.contarEntregasPorFechamento(fechamento.getId());
-        fechamento.setSaldoFinal(dto.getValorRecebido().subtract(dto.getDespesas()).subtract(dto.getRetiradas()).add(totalEntregas));
+        // Cálculo inicial do saldo
+        BigDecimal saldo = dto.getValorRecebido()
+                .subtract(dto.getDespesas())
+                .subtract(dto.getRetiradas());
+        
+        // Obter o total das entregas (assumindo que TotalEntregasDTO tem um método getTotal())
+        TotalEntregasDTO totalEntregas = entregasService.calcularTotalEntregas(motoboy.getId());
+        saldo = saldo.add(totalEntregas.getTotal()); // Adiciona o valor das entregas ao saldo
+        
+        fechamento.setSaldoFinal(saldo);
 
         return repository.save(fechamento);
     }

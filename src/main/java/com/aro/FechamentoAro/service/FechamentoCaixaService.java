@@ -25,8 +25,10 @@ import com.aro.FechamentoAro.repository.UnidadeRepository;
 import com.aro.FechamentoAro.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class FechamentoCaixaService {
 
     @Autowired
@@ -41,9 +43,8 @@ public class FechamentoCaixaService {
     @Autowired
     private FechamentoMotoboyRepository fechamentoMotoboyRepository;
 
-    /**
-     * Abre um novo caixa para a unidade especificada
-     */
+    
+     //Abre um novo caixa para a unidade especificada
     @Transactional
     public FechamentoCaixa abrirCaixa(FechamentoCaixaDTO dto) {
      
@@ -83,10 +84,8 @@ public class FechamentoCaixaService {
         return fechamentoCaixaRepository.save(novoCaixa);
     }
 
-    /**
-     * Fecha um caixa aberto
-     */
- 
+    
+     //Fecha um caixa aberto
     @Transactional
     public FechamentoCaixa fecharCaixa(Long id, BigDecimal trocoFinal) {
         // Primeiro obtém o caixa
@@ -121,24 +120,27 @@ public class FechamentoCaixaService {
 
         return fechamentoCaixaRepository.save(caixa);
     }
+    
+    private void validarTrocoInicial(BigDecimal troco) {
+        if (troco == null || troco.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("O troco inicial deve ser um valor positivo");
+        }
+    }
 
-    /**
-     * Busca um fechamento de caixa por ID
-     */
+    
+    //Busca um fechamento de caixa por ID
     public Optional<FechamentoCaixa> buscarPorId(Long id) {
         return fechamentoCaixaRepository.findById(id);
     }
 
-    /**
-     * Lista todos os fechamentos de caixa de uma unidade
-     */
+    
+    //Lista todos os fechamentos de caixa de uma unidade
     public Optional<FechamentoCaixa> listarPorUnidade(Long unidadeId) {
         return fechamentoCaixaRepository.findById(unidadeId);
     }
-
-    /**
-     * Lista fechamentos por período
-     */
+    
+    
+    //Lista fechamentos por período
     public List<FechamentoCaixa> listarPorPeriodo(Long unidadeId, LocalDate dataInicio, LocalDate dataFim) {
         return fechamentoCaixaRepository.findByUnidadeIdAndDataBetween(unidadeId, dataInicio, dataFim);
     }

@@ -1,30 +1,31 @@
 package com.aro.FechamentoAro.Security.Config;
 
-import com.aro.FechamentoAro.entities.Usuario;
-import com.aro.FechamentoAro.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.aro.FechamentoAro.entities.Usuario;
+import com.aro.FechamentoAro.repository.UsuarioRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService{
-	
-	 private final UsuarioRepository usuarioRepository;
+@RequiredArgsConstructor
+public class UserDetailsServiceImpl implements UserDetailsService {
 
-	    public UserDetailsServiceImpl(UsuarioRepository usuarioRepository) {
-	        this.usuarioRepository = usuarioRepository;
-	    }
+    private final UsuarioRepository usuarioRepository;
 
-	    @Override
-	    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-	        Usuario usuario = usuarioRepository.findByEmail(email)
-	                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
-	        return org.springframework.security.core.userdetails.User
-	                .withUsername(usuario.getEmail())
-	                .password(usuario.getSenha())
-	                .roles(usuario.getNivel().name()) // "ADMIN", "USER"
-	                .build();
-	    }
-
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
+        
+        return User.builder()
+            .username(usuario.getEmail())
+            .password(usuario.getSenha())
+            .roles(usuario.getNivel().name())
+            .build();
+    }
 }

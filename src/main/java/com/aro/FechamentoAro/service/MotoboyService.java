@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aro.FechamentoAro.entities.Motoboy;
+import com.aro.FechamentoAro.exceptions.EntityNotFoundException;
 import com.aro.FechamentoAro.repository.MotoboyRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class MotoboyService {
 	
 	@Autowired
@@ -19,8 +23,9 @@ public class MotoboyService {
         return motoboyRepository.findAll();
     }
 
-    public Optional<Motoboy> buscarPorId(Long id) {
-        return motoboyRepository.findById(id);
+    public Motoboy buscarPorId(Long id) {
+    	return motoboyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Motoboy não encontrado"));
     }
 
     public Motoboy salvar(Motoboy motoboy) {
@@ -28,6 +33,10 @@ public class MotoboyService {
     }
 
     public void deletar(Long id) {
+    	if (!motoboyRepository.existsById(id)) {
+            throw new EntityNotFoundException("Motoboy não encontrado");
+        }
     	motoboyRepository.deleteById(id);
     }
+
 }

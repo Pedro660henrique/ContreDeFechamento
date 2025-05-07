@@ -1,6 +1,7 @@
 
 package com.aro.FechamentoAro.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,13 +16,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
-public class FechamentoCaixa {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class FechamentoCaixa implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	private LocalDate data;
@@ -37,12 +43,15 @@ public class FechamentoCaixa {
 	
     // Relacionamentos com as movimentações detalhadas
 	@OneToMany(mappedBy = "fechamentoCaixa", cascade = CascadeType.ALL)
+	@ToString.Exclude
 	private List<Entrada> entradas;
 	
 	@OneToMany(mappedBy = "fechamentoCaixa", cascade = CascadeType.ALL)
+	@ToString.Exclude
 	private List<Saida> saidas;
 	
 	@OneToMany(mappedBy = "fechamentoCaixa", cascade = CascadeType.ALL)
+	@ToString.Exclude
 	private List<AnotacaoDespesa> anotacoes;
 	
 	@ManyToOne
