@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,34 +22,33 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Entrada implements Serializable{
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@NotNull(message = "Horário é obrigatório")
-	private LocalTime horario; 
-	
-	@NotBlank(message = "Descrição é obrigatória")
+public class Entrada implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @NotNull(message = "Horário é obrigatório")
+    private LocalTime horario; 
+    
+    @NotBlank(message = "Descrição é obrigatória")
     @Size(max = 255, message = "Descrição deve ter no máximo 255 caracteres")
     private String descricao;
-	
-	@NotNull(message = "Valor é obrigatório")
+    
+    @NotNull(message = "Valor é obrigatório")
     @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero")
-	private BigDecimal valor;
-	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+    private BigDecimal valor;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fechamento_caixa_id", nullable = false)
-	private FechamentoCaixa fechamentoCaixa;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fechamento_caixa_id", nullable = false)
+    private FechamentoCaixa fechamentoCaixa;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "metodo_pagamento", nullable = false)
     private MetodoPagamento metodoPagamento;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 }
